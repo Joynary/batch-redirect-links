@@ -1,5 +1,5 @@
 === Guide ===
-Contributors: Your Name
+Contributors: Joynary
 Tags: elementor, navigation, widget, link manager, bookmarks
 Requires at least: 5.0
 Tested up to: 6.9
@@ -56,3 +56,4 @@ The plugin uses the Google Favicon service to automatically retrieve the high-qu
 *   Implemented auto logo and title detection.
 *   Added batch import functionality.
 *   Added support for multiple corner icons.
+
