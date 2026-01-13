@@ -3,7 +3,7 @@
 Plugin Name: Guide
 Description: Smart website navigation widget for Elementor with auto logo/name detection, batch import, and hover description.
 Version: 1.0
-Author: Your Name
+Author: Joynary
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
@@ -39,4 +39,5 @@ add_action('elementor/widgets/widgets_registered', function () {
 });
 
 // Admin/batch import
+
 require_once GUIDE_PLUGIN_DIR . 'includes/admin.php';
