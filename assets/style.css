@@ -1,0 +1,382 @@
+.guide-nav-list {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 13px; /* 垂直间距 */
+  column-gap: 10px; /* 水平间距保持不变 */
+  justify-content: flex-start;
+}
+.guide-nav-card {
+  display: flex;
++  flex-direction: row;
+  flex: 0 0 160px; /* 固定宽度，确保所有卡片宽度一致 */
+  width: 160px; /* 固定宽度 */
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow: visible; /* 改为visible以显示圆形图标 */
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  transition: box-shadow 0.2s;
+  align-items: stretch;
+  padding: 0;
+  box-sizing: border-box;
+  /* 严格限制卡片宽度，防止内容溢出 */
+  flex-shrink: 0;
+  /* 确保卡片有固定的高度 */
+  height: 56px; /* 增加6px高度 */
+  position: relative; /* 为圆形图标定位 */
+}
+.guide-nav-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+}
+.guide-nav-icon {
+  flex: 0 0 40px; /* 固定宽度40px */
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  padding: 0;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+.guide-nav-icon img {
+  width: 23px; /* 1.3倍宽度：18*1.3≈23 */
+  height: 22px; /* 1.2倍高度：18*1.2≈22 */
+  object-fit: contain;
+  border-radius: 5px;
+}
+
+/* Logo tooltip styles */
+.guide-nav-icon {
+  position: relative;
+}
+
+
+.guide-nav-content {
+  flex: 1;
+  width: calc(160px - 40px); /* 总宽度160px - 图标40px，圆形图标与卡片边缘对齐 */
+  max-width: calc(160px - 40px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5px 8px 2px 5px; /* 调整右边距 */
+  box-sizing: border-box;
+  overflow: visible;
+  min-width: 0; /* 允许flex子元素收缩 */
+  /* 确保内容区域高度固定 */
+  height: 100%;
+  /* 确保内容始终垂直居中 */
+  align-items: flex-start;
+  /* 使用flex布局确保垂直居中 */
+  gap: 0px;
+}
+.guide-nav-title {
+  font-size: 0.88em;
+  font-weight: bold;
+  color: #222;
+  line-height: 1.2; /* 增加行高确保字母下降部分有足够空间 */
+  white-space: nowrap;
+  overflow: hidden; /* 截断长文本 */
+  text-overflow: ellipsis;
+  display: block;
+  width: 100%; /* name占用整个宽度 */
+  max-width: 290px; /* 再次增加20px宽度：270px + 20px = 290px */
+  min-width: 0;
+  box-sizing: border-box;
+  /* 固定高度，占导航卡片高度的55% */
+  height: 33px;
+  flex-shrink: 0;
+  margin: 3px 0 0 0; /* 上边距让name往下移动 */
+  padding: 0 8px 0 0; /* 减少右边距，严格控制文本宽度 */
+  position: relative;
+  cursor: pointer;
+}
+
+/* Name tooltip styles */
+.guide-nav-title::after {
+  content: attr(title);
+  position: absolute;
+  left: 50%;
+  top: 120%;
+  transform: translateX(-50%);
+  min-width: 150px;
+  max-width: 280px;
+  background: #fff;
+  color: #222;
+  border: 1px solid #eee;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  padding: 5px 8px;
+  border-radius: 6px;
+  z-index: 9999;
+  white-space: normal;
+  font-size: 0.92em;
+  word-wrap: break-word;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.05s, visibility 0.05s;
+  pointer-events: none;
+}
+
+.guide-nav-title:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+.guide-nav-desc {
+  font-size: 0.68em; /* 增大字体 */
+  font-weight: 500; /* 轻微加粗，但不超过name的粗细 */
+  color: #444; /* 加深颜色 */
+  white-space: nowrap;
+  overflow: hidden; /* 防止内容溢出到边界 */
+  text-overflow: ellipsis;
+  cursor: pointer;
+  position: relative;
+  line-height: 1.2; /* 增加行高确保字母下降部分有足够空间 */
+  direction: ltr;
+  display: block;
+  width: 100%;
+  max-width: 290px; /* 再次增加20px宽度：270px + 20px = 290px */
+  box-sizing: border-box;
+  min-width: 0;
+  /* 固定高度，占导航卡片高度的35% */
+  height: 21px;
+  flex-shrink: 0;
+  margin: -10px 0 0 0; /* 负上边距让description向上移动，靠近name */
+  padding: 0 8px 0 0; /* 减少右边距，严格控制文本宽度 */
+}
+.guide-nav-desc::after {
+  content: attr(title);
+  position: absolute;
+  left: 50%;
+  top: 120%;
+  transform: translateX(-50%);
+  min-width: 150px;
+  max-width: 280px;
+  background: #fff;
+  color: #222;
+  border: 1px solid #eee;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  padding: 5px 8px;
+  border-radius: 6px;
+  z-index: 9999;
+  white-space: normal;
+  font-size: 0.92em;
+  word-wrap: break-word;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.05s, visibility 0.05s;
+  pointer-events: none;
+}
+
+.guide-nav-desc:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 圆形图标样式 */
+.guide-nav-corner-icon {
+  position: absolute;
+  top: -8.5px; /* 向上移动，增加与name文字的距离 */
+  right: -0.5px; /* 向左移动50%直径距离 (-10px + 9.5px = -0.5px) */
+  width: 17px; /* 再缩小10% (19px * 0.9) */
+  height: 17px; /* 再缩小10% (19px * 0.9) */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  cursor: pointer;
+  pointer-events: auto;
+  overflow: visible; /* 改为visible以显示tooltip */
+}
+
+.guide-nav-corner-icon-2 {
+  position: absolute;
+  top: -8.5px; /* 向上移动，与其他Corner Icon保持相同位置 */
+  right: 22.5px; /* 再往右移动2px (24.5px - 2px = 22.5px) */
+  width: 17px; /* 与第一个Corner Icon保持相同尺寸 */
+  height: 17px; /* 与第一个Corner Icon保持相同尺寸 */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  cursor: pointer;
+  pointer-events: auto;
+  overflow: visible;
+}
+
+.guide-nav-corner-icon-3 {
+  position: absolute;
+  top: -8.5px; /* 向上移动，与其他Corner Icon保持相同位置 */
+  right: 45.5px; /* 与Corner Icon 2保持23px间距 (22.5px + 23px = 45.5px) */
+  width: 17px; /* 与其他Corner Icon保持相同尺寸 */
+  height: 17px; /* 与其他Corner Icon保持相同尺寸 */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  cursor: pointer;
+  pointer-events: auto;
+  overflow: visible;
+}
+
+.guide-nav-corner-icon-4 {
+  position: absolute;
+  top: -8.5px; /* 向上移动，与其他Corner Icon保持相同位置 */
+  right: 68.5px; /* 与Corner Icon 3保持23px间距 (45.5px + 23px = 68.5px) */
+  width: 17px; /* 与其他Corner Icon保持相同尺寸 */
+  height: 17px; /* 与其他Corner Icon保持相同尺寸 */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  cursor: pointer;
+  pointer-events: auto;
+  overflow: visible;
+}
+
+.guide-nav-corner-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.guide-nav-corner-icon::after {
+  content: attr(data-corner-name);
+  position: absolute;
+  top: 120%; /* 参考description的定位方式 */
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 60px;
+  max-width: 120px;
+  background: #fff; /* 改为白色背景，与description一致 */
+  color: #222; /* 改为深色文字 */
+  border: 1px solid #eee; /* 添加边框 */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10); /* 使用相同的阴影 */
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.guide-nav-corner-icon:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 只有当data-corner-name不为空时才显示tooltip */
+.guide-nav-corner-icon[data-corner-name=""]::after {
+  display: none;
+}
+
+/* Corner Icon 2 tooltip styles */
+.guide-nav-corner-icon-2::after {
+  content: attr(data-corner-name);
+  position: absolute;
+  top: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 60px;
+  max-width: 120px;
+  background: #fff;
+  color: #222;
+  border: 1px solid #eee;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.guide-nav-corner-icon-2:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+.guide-nav-corner-icon-2[data-corner-name=""]::after {
+  display: none;
+}
+
+/* Corner Icon 3 tooltip styles */
+.guide-nav-corner-icon-3::after {
+  content: attr(data-corner-name);
+  position: absolute;
+  top: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 60px;
+  max-width: 120px;
+  background: #fff;
+  color: #222;
+  border: 1px solid #eee;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.guide-nav-corner-icon-3:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+.guide-nav-corner-icon-3[data-corner-name=""]::after {
+  display: none;
+}
+
+/* Corner Icon 4 tooltip styles */
+.guide-nav-corner-icon-4::after {
+  content: attr(data-corner-name);
+  position: absolute;
+  top: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 60px;
+  max-width: 120px;
+  background: #fff;
+  color: #222;
+  border: 1px solid #eee;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.guide-nav-corner-icon-4:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+.guide-nav-corner-icon-4[data-corner-name=""]::after {
+  display: none;
+}

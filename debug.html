@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide Navigation CSV 调试工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fafafa;
+        }
+        .section h2 {
+            color: #555;
+            margin-top: 0;
+        }
+        .file-input {
+            margin-bottom: 15px;
+        }
+        .btn {
+            background-color: #007cba;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn:hover {
+            background-color: #005a87;
+        }
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .log {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .error {
+            color: #d63638;
+        }
+        .success {
+            color: #00a32a;
+        }
+        .info {
+            color: #0073aa;
+        }
+        .csv-example {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Guide Navigation CSV 调试工具</h1>
+        
+        <div class="section">
+            <h2>1. 环境检查</h2>
+            <button class="btn" onclick="checkEnvironment()">检查环境</button>
+            <div id="env-log" class="log" style="margin-top: 15px;"></div>
+        </div>
+        
+        <div class="section">
+            <h2>2. CSV 文件测试</h2>
+            <div class="file-input">
+                <input type="file" id="csv-file" accept=".csv" />
+            </div>
+            <button class="btn" onclick="testCSV()">测试 CSV 解析</button>
+            <div id="csv-log" class="log" style="margin-top: 15px;"></div>
+            
+            <h3>CSV 格式示例：</h3>
+            <div class="csv-example">
+https://www.google.com,Google,搜索引擎
+https://www.github.com,GitHub,代码托管平台
+https://www.stackoverflow.com,Stack Overflow,程序员问答社区
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>3. Elementor 集成测试</h2>
+            <p><strong>注意：</strong>此功能需要在 Elementor 编辑界面中使用</p>
+            <button class="btn" onclick="testElementor()">测试 Elementor 集成</button>
+            <div id="elementor-log" class="log" style="margin-top: 15px;"></div>
+        </div>
+        
+        <div class="section">
+            <h2>4. 使用说明</h2>
+            <ol>
+                <li>确保在 WordPress 后台的 Elementor 编辑界面中</li>
+                <li>添加 Guide Navigation 组件到页面</li>
+                <li>点击选择该组件，确保左侧面板显示组件设置</li>
+                <li>准备 CSV 文件，格式为：URL,名称,描述</li>
+                <li>使用组件中的 CSV 上传功能</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function log(elementId, message, type = 'info') {
+            const logElement = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
+            logElement.innerHTML += `<span class="${className}">[${timestamp}] ${message}</span>\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+        
+        function clearLog(elementId) {
+            document.getElementById(elementId).innerHTML = '';
+        }
+        
+        function checkEnvironment() {
+            clearLog('env-log');
+            log('env-log', '开始环境检查...', 'info');
+            
+            // 检查 jQuery
+            if (typeof jQuery !== 'undefined') {
+                log('env-log', `✓ jQuery 已加载 (版本: ${jQuery.fn.jquery})`, 'success');
+            } else {
+                log('env-log', '✗ jQuery 未加载', 'error');
+            }
+            
+            // 检查 Elementor
+            if (typeof elementor !== 'undefined') {
+                log('env-log', '✓ Elementor 已加载', 'success');
+                if (elementor.panel) {
+                    log('env-log', '✓ Elementor 面板可用', 'success');
+                } else {
+                    log('env-log', '✗ Elementor 面板不可用', 'error');
+                }
+            } else {
+                log('env-log', '✗ Elementor 未加载（这在非编辑界面是正常的）', 'info');
+            }
+            
+            // 检查 FileReader API
+            if (typeof FileReader !== 'undefined') {
+                log('env-log', '✓ FileReader API 支持', 'success');
+            } else {
+                log('env-log', '✗ FileReader API 不支持', 'error');
+            }
+            
+            log('env-log', '环境检查完成', 'info');
+        }
+        
+        function testCSV() {
+            clearLog('csv-log');
+            const fileInput = document.getElementById('csv-file');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                log('csv-log', '请先选择一个 CSV 文件', 'error');
+                return;
+            }
+            
+            log('csv-log', `开始解析文件: ${file.name} (${file.size} bytes)`, 'info');
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                log('csv-log', `文件读取成功，内容长度: ${content.length}`, 'success');
+                
+                // 显示文件前100个字符
+                log('csv-log', `文件内容预览: ${content.substring(0, 100)}...`, 'info');
+                
+                // 解析 CSV
+                const rows = parseCSV(content);
+                log('csv-log', `解析结果: 共 ${rows.length} 行数据`, rows.length > 0 ? 'success' : 'error');
+                
+                rows.forEach((row, index) => {
+                    log('csv-log', `第${index + 1}行: URL=${row.url}, Name=${row.name}, Desc=${row.description}`, 'info');
+                });
+            };
+            
+            reader.onerror = function() {
+                log('csv-log', '文件读取失败', 'error');
+            };
+            
+            reader.readAsText(file, 'UTF-8');
+        }
+        
+        function testElementor() {
+            clearLog('elementor-log');
+            log('elementor-log', '开始 Elementor 集成测试...', 'info');
+            
+            if (typeof elementor === 'undefined') {
+                log('elementor-log', '✗ Elementor 未加载，请在 Elementor 编辑界面中运行此测试', 'error');
+                return;
+            }
+            
+            log('elementor-log', '✓ Elementor 已加载', 'success');
+            
+            if (!elementor.panel) {
+                log('elementor-log', '✗ Elementor 面板不可用', 'error');
+                return;
+            }
+            
+            log('elementor-log', '✓ Elementor 面板可用', 'success');
+            
+            // 检查当前选中的组件
+            if (elementor.panel.currentView) {
+                const currentView = elementor.panel.currentView;
+                if (currentView.model) {
+                    const widgetType = currentView.model.get('widgetType');
+                    log('elementor-log', `当前选中组件类型: ${widgetType}`, 'info');
+                    
+                    if (widgetType === 'guide_nav') {
+                        log('elementor-log', '✓ 当前选中的是 Guide Navigation 组件', 'success');
+                    } else {
+                        log('elementor-log', '✗ 当前选中的不是 Guide Navigation 组件', 'error');
+                    }
+                } else {
+                    log('elementor-log', '✗ 无法获取当前组件模型', 'error');
+                }
+            } else {
+                log('elementor-log', '✗ 没有当前视图', 'error');
+            }
+            
+            log('elementor-log', 'Elementor 集成测试完成', 'info');
+        }
+        
+        // CSV 解析函数（复制自主脚本）
+        function parseCSV(content) {
+            var lines = content.split('\n');
+            var result = [];
+            
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i].trim();
+                if (line && !line.startsWith('#')) {
+                    var columns = parseCSVLine(line);
+                    
+                    if (columns.length >= 3) {
+                        result.push({
+                            url: cleanValue(columns[0]),
+                            name: cleanValue(columns[1]),
+                            description: cleanValue(columns[2])
+                        });
+                    } else if (columns.length >= 2) {
+                        var url = cleanValue(columns[0]);
+                        if (url.match(/^https?:\/\//)) {
+                            result.push({
+                                url: url,
+                                name: cleanValue(columns[1]),
+                                description: ''
+                            });
+                        }
+                    } else if (columns.length >= 1) {
+                        var url = cleanValue(columns[0]);
+                        if (url.match(/^https?:\/\//)) {
+                            result.push({
+                                url: url,
+                                name: extractDomainName(url),
+                                description: ''
+                            });
+                        }
+                    }
+                }
+            }
+            
+            return result;
+        }
+        
+        function parseCSVLine(line) {
+            var result = [];
+            var current = '';
+            var inQuotes = false;
+            
+            for (var i = 0; i < line.length; i++) {
+                var char = line[i];
+                
+                if (char === '"') {
+                    if (inQuotes && line[i + 1] === '"') {
+                        current += '"';
+                        i++;
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            
+            result.push(current);
+            return result;
+        }
+        
+        function cleanValue(value) {
+            return value.replace(/^["']|["']$/g, '').trim();
+        }
+        
+        function extractDomainName(url) {
+            try {
+                var domain = new URL(url).hostname;
+                return domain.replace(/^www\./, '');
+            } catch (e) {
+                return url;
+            }
+        }
+    </script>
+</body>
+</html>

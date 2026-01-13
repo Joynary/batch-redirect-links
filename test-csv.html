@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV功能调试测试</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fafafa;
+        }
+        .btn {
+            background-color: #007cba;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        .btn:hover {
+            background-color: #005a87;
+        }
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        #log {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        .log-entry {
+            margin: 2px 0;
+            padding: 2px 5px;
+        }
+        .log-info { background-color: #e7f3ff; }
+        .log-warn { background-color: #fff3cd; }
+        .log-error { background-color: #f8d7da; }
+        .log-success { background-color: #d4edda; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CSV功能调试测试</h1>
+        
+        <div class="section">
+            <h3>环境检查</h3>
+            <button type="button" id="check-env" class="btn">检查环境</button>
+            <button type="button" id="clear-log" class="btn">清空日志</button>
+        </div>
+        
+        <div class="section">
+            <h3>CSV上传测试（模拟Elementor环境）</h3>
+            <div id="guide-csv-upload-area" style="margin-top:10px;">
+                <input type="file" id="guide-csv-file" accept=".csv,.xlsx,.xls" style="margin-bottom:10px;">
+                <button type="button" id="guide-process-csv" class="btn">解析并添加到列表</button>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h3>手动测试</h3>
+            <textarea id="manual-csv" placeholder="在这里粘贴CSV内容进行测试...\n\n示例：\nhttps://github.com,Github,代码托管平台\nhttps://stackoverflow.com,Stack Overflow,程序员问答社区" style="width:100%;height:100px;margin-bottom:10px;"></textarea>
+            <button type="button" id="test-manual-csv" class="btn">测试手动CSV</button>
+        </div>
+        
+        <div class="section">
+            <h3>调试日志</h3>
+            <div id="log"></div>
+        </div>
+    </div>
+
+    <script>
+        // 日志系统
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logDiv.appendChild(logEntry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            
+            // 同时输出到控制台
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        // 从原始script.js复制的函数
+        function parseCSV(text) {
+            log('开始解析CSV内容');
+            const lines = text.split('\n');
+            const result = [];
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (line) {
+                    const parts = line.split(',');
+                    if (parts.length >= 2) {
+                        const url = parts[0].trim();
+                        const name = parts[1].trim();
+                        const description = parts.length > 2 ? parts.slice(2).join(',').trim() : '';
+                        
+                        if (url && name) {
+                            result.push({
+                                url: url,
+                                name: name,
+                                description: description
+                            });
+                            log(`解析记录 ${result.length}: ${name} - ${url}`);
+                        }
+                    }
+                }
+            }
+            
+            log(`CSV解析完成，有效记录数: ${result.length}`, 'success');
+            return result;
+        }
+
+        function processCSVData(data) {
+            log(`开始处理CSV数据，共 ${data.length} 条记录`);
+            
+            if (data.length === 0) {
+                log('CSV文件中没有找到有效数据', 'warn');
+                return;
+            }
+            
+            data.forEach((item, index) => {
+                log(`记录 ${index + 1}: URL=${item.url}, Name=${item.name}, Description=${item.description}`);
+            });
+            
+            log('CSV数据处理完成', 'success');
+        }
+
+        // 页面加载完成后的初始化
+        jQuery(document).ready(function($) {
+            log('=== 页面初始化开始 ===');
+            log(`jQuery版本: ${$.fn.jquery}`);
+            log(`页面URL: ${window.location.href}`);
+            
+            // 检查元素
+            setTimeout(function() {
+                log('=== 元素检查 ===');
+                log(`guide-process-csv按钮数量: ${$('#guide-process-csv').length}`);
+                log(`guide-csv-file输入框数量: ${$('#guide-csv-file').length}`);
+                log(`guide-csv-upload-area区域数量: ${$('#guide-csv-upload-area').length}`);
+                
+                if ($('#guide-process-csv').length === 0) {
+                    log('未找到CSV处理按钮', 'error');
+                } else {
+                    log('CSV处理按钮找到，准备绑定事件', 'success');
+                }
+            }, 1000);
+            
+            // 环境检查按钮
+            $('#check-env').on('click', function() {
+                log('=== 环境检查 ===');
+                log(`jQuery可用: ${typeof jQuery !== 'undefined'}`);
+                log(`jQuery版本: ${$.fn.jquery}`);
+                log(`页面中所有按钮数量: ${$('button').length}`);
+                log(`页面中所有文件输入框数量: ${$('input[type="file"]').length}`);
+                
+                // 列出所有按钮
+                $('button').each(function(index, btn) {
+                    log(`按钮 ${index + 1}: id="${btn.id}", class="${btn.className}", text="${$(btn).text()}"`);  
+                });
+            });
+            
+            // 清空日志按钮
+            $('#clear-log').on('click', function() {
+                $('#log').empty();
+                console.clear();
+            });
+            
+            // 手动CSV测试按钮
+            $('#test-manual-csv').on('click', function() {
+                const csvContent = $('#manual-csv').val();
+                if (!csvContent.trim()) {
+                    log('请输入CSV内容', 'warn');
+                    return;
+                }
+                
+                log('=== 手动CSV测试开始 ===');
+                try {
+                    const parsedData = parseCSV(csvContent);
+                    processCSVData(parsedData);
+                } catch (error) {
+                    log(`CSV解析错误: ${error.message}`, 'error');
+                }
+            });
+            
+            // CSV文件上传和解析功能（完全复制原始代码）
+            $(document).on('click', '#guide-process-csv', function(){
+                log('=== CSV按钮点击事件触发 ===');
+                log(`按钮元素: ${this.tagName}#${this.id}`);
+                log(`jQuery版本: ${$.fn.jquery}`);
+                log(`相关元素数量: ${$('#guide-csv-file').length}`);
+                
+                const fileInput = $('#guide-csv-file')[0];
+                if (!fileInput) {
+                    log('找不到文件输入框', 'error');
+                    alert('找不到文件输入框，请刷新页面重试');
+                    return;
+                }
+                
+                log(`文件输入框元素: ${fileInput.tagName}#${fileInput.id}`);
+                
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    log('未选择文件', 'warn');
+                    alert('请先选择一个CSV文件');
+                    return;
+                }
+                
+                const file = fileInput.files[0];
+                log(`选择的文件: ${file.name}, 大小: ${file.size} bytes`);
+                
+                // 显示处理中状态
+                const button = $(this);
+                const originalText = button.text();
+                button.text('处理中...').prop('disabled', true);
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    log('文件读取完成');
+                    const csvContent = e.target.result;
+                    log(`CSV内容长度: ${csvContent.length} 字符`);
+                    
+                    try {
+                        const parsedData = parseCSV(csvContent);
+                        log(`CSV解析成功，解析出 ${parsedData.length} 条记录`, 'success');
+                        processCSVData(parsedData);
+                    } catch (error) {
+                        log(`CSV解析错误: ${error.message}`, 'error');
+                        alert('CSV解析失败: ' + error.message);
+                    } finally {
+                        // 恢复按钮状态
+                        button.text(originalText).prop('disabled', false);
+                    }
+                };
+                
+                reader.onerror = function() {
+                    log('文件读取失败', 'error');
+                    alert('文件读取失败，请重试');
+                    button.text(originalText).prop('disabled', false);
+                };
+                
+                reader.readAsText(file, 'UTF-8');
+            });
+            
+            log('=== 事件绑定完成 ===', 'success');
+        });
+    </script>
+</body>
+</html>
